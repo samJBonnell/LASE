@@ -1,0 +1,20 @@
+Case Study 14 - 75000 Pa Uniform Load
+Date: 2025-01-04
+Start Time: 1736031798.600187
+
+Simulation Parameters
+Pressure: -75000 Pa
+Mesh Size: 0.03 m
+
+Optimization Parameters
+Generations: 50
+Population: 30
+Offspring: 18
+
+NSGA-II Parameters
+SBX Probability: 0.7
+SBX ETA: 90
+Mutation PM: 80
+
+Completion Time: 1736071185.037482
+Elapsed Time: 10.940677028695742 hours

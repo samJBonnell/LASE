@@ -1,0 +1,10 @@
+Plate Sensitivity Analysis
+Date: 2025-01-09
+Start Time: 1736460034.0063174
+
+Simulation Parameters
+Flange/Web Mesh Size: 0.01
+
+
+Completion Time: 1736462971.5269742
+Elapsed Time: 0.8159779657920202 hours

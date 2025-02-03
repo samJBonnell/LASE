@@ -1,0 +1,20 @@
+Case Study 15 - 150000 Pa Uniform Load
+Date: 2025-01-05
+Start Time: 1736101580.42933
+
+Simulation Parameters
+Pressure: -150000 Pa
+Mesh Size: 0.03 m
+
+Optimization Parameters
+Generations: 50
+Population: 30
+Offspring: 18
+
+NSGA-II Parameters
+SBX Probability: 0.7
+SBX ETA: 70
+Mutation PM: 60
+
+Completion Time: 1736142769.7003057
+Elapsed Time: 11.441464162998729 hours
