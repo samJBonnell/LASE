@@ -50,47 +50,24 @@ start_time = time.time()
 
 # Model
 input_keys = ["nTS", "nLS", "tP", "hTS", "tTS", "wTF", "tTF", "hLS", "tLS", "tLF", "wLF", "P", "mP", "mTS", "mTF", "mLS", "mLF", "W", "L"]
-input_path = "temp/input.csv"
+input_path = "temp\\input.csv"
 
 output_keys = ["sVM", "m"]
-output_path = "temp/output.csv"
+output_path = "temp\\output.csv"
 
 variables = FEM.load_extern('initial.csv') # Load an initial set of variables from an external source. The geometric information will be overwritten but mesh sizes, etc. will be preserved through the process.
 variables = np.array(variables)
 stiffened_panel = FEM.FiniteElementModel("StiffenedPanel.py", input_path, output_path, input_keys, output_keys)
 
 # Optimization Parameters
-Generations = 50
-Population = 30
-Offspring = 18
+Generations = 100
+Population = 20
+Offspring = 8
 
 # NSGA-II Parameters
 SBX_prob = 0.7
-SBX_eta = 70
-Mutation_PM = 60
-
-# Notes
-# comments = "Case Study 15- 75000 Pa Uniform Load"
-
-# # Write variables to simulation information files
-# output = open("temp\\information.txt", 'w')
-# output.write(comments + "\n")
-# output.write("Date: " + date + "\n")
-# output.write("Start Time: " + str(start_time) + "\n")
-# output.write("\n")
-# output.write("Simulation Parameters\n")
-# output.write("Pressure: " + str(Pressure) + " Pa" + "\n")
-# output.write("\n")
-# output.write("Optimization Parameters\n")
-# output.write("Generations: " + str(Generations) + "\n")
-# output.write("Population: " + str(Population) + "\n")
-# output.write("Offspring: " + str(Offspring) + "\n")
-# output.write("\n")
-# output.write("NSGA-II Parameters\n")
-# output.write("SBX Probability: " + str(SBX_prob) + "\n")
-# output.write("SBX ETA: " + str(SBX_eta) + "\n")
-# output.write("Mutation PM: " + str(Mutation_PM))
-# output.close()
+SBX_eta = 40
+Mutation_PM = 140
 
 class StiffenedPanelOptimizationCS3(ElementwiseProblem):
     # Give access to meshsize and pressure for simulation
@@ -107,8 +84,8 @@ class StiffenedPanelOptimizationCS3(ElementwiseProblem):
         super().__init__(n_var=11,
                          n_obj=1,
                          n_ieq_constr=2,
-                         xl = np.array([1, 1, 0.005, 0.05, 0.005, 0.005, 0.010, 0.010, 0.005, 0.005, 0.010]),
-                         xu = np.array([10, 10, 0.050, 1.00, 0.050, 0.050, 0.750, 0.950, 0.050, 0.050, 0.500]))
+                         xl = np.array([2, 2, 0.005, 0.05, 0.005, 0.005, 0.010, 0.010, 0.005, 0.005, 0.010]),
+                         xu = np.array([9, 14, 0.075, 1.00, 0.075, 0.050, 0.750, 0.950, 0.075, 0.075, 0.500]))
 
     def _evaluate(self, x, out, *args, **kwargs):
         # Create 'template' integer values for stiffener numbers
@@ -118,7 +95,9 @@ class StiffenedPanelOptimizationCS3(ElementwiseProblem):
         if x[7] >= x[3]:
             x[7] = x[3] - 0.0001
 
-        data = stiffened_panel.evaluate(x) # Evalute the objective function
+        variables[0:11] = x
+
+        data = stiffened_panel.evaluate(variables) # Evalute the objective function
         stress = data["output"][0]
         mass = data["output"][1]
 
@@ -148,7 +127,6 @@ algorithm = NSGA2(
 print("\n--- Started Analysis ---\n")
 
 best = []
-
 termination = get_termination("n_gen", Generations)
 algorithm.setup(problem, termination=termination, seed=None, verbose=False)
 
@@ -160,6 +138,7 @@ while algorithm.has_next():
     index_min = min(range(len(tempList)), key=tempList.__getitem__)
     best.append(algorithm.pop.get("X")[index_min])
 
+    print(f"Generation: {algorithm.n_gen - 1}")
     writeGens = open("temp\\generations.csv", 'a')
     writeGens.write(str(algorithm.n_gen - 1) + "," + str(algorithm.evaluator.n_eval) + "\n")
     writeGens.close()
@@ -171,13 +150,6 @@ print("\n\n!!! - Program executed in: %s hours" % round((time.time() - start_tim
 writeResults = open("temp\\results.csv", 'w')
 for gen in best:
     writeResults.write(str(gen) + "\n")
-
 writeResults.close()
 
 print("\n--- Analysis Completed ---\n")
-
-# Record elapsed run time
-output = open("temp\\information.txt", 'a')
-output.write("\n\nCompletion Time: " + str(time.time()) + "\n")
-output.write("Elapsed Time: " + str((time.time() - start_time)/3600) + " hours")
-output.close()
