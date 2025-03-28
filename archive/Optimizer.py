@@ -242,7 +242,7 @@ class StiffenedPanelOptimizationCS4(ElementwiseProblem):
         writeHistory.write(str(lines[0]) + "," + str(lines[1]) + "," + str(f2) + "\n")
         writeHistory.close()
 
-problem = StiffenedPanelOptimizationCS4()
+problem = StiffenedPanelOptimizationCS3()
 
 algorithm = NSGA2(
     pop_size=Population,
