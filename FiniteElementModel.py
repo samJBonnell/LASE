@@ -14,7 +14,7 @@ class FiniteElementModel:
         # Define the results we expect to recieve from the model
         self.output_path = output_path
         self.output_keys = output_keys
-        self.output = np.zeros(len(output_keys))
+        self.output = np.empty(len(output_keys), dtype=object)
 
         # Define a history to store previous information about the system
         self.history = []
@@ -77,7 +77,10 @@ class FiniteElementModel:
 
             # Need to ensure that the order of the variables is the same as for the input and output of the self
             for index in range(0,len(self.output_keys)):
-                self.output[index] = float(lines[index])
+                try:
+                    self.output[index] = float(lines[index])
+                except (ValueError, TypeError):
+                    self.output[index] = lines[index]
         else:
             raise RuntimeError("Cannot read output: Model execution failed.")
 
